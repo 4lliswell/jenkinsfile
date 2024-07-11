@@ -1,0 +1,268 @@
+## Learning Outcomes
+
+At the end of the this hands-on training, students will be able to;
+
+
+- install plugins
+
+- create view
+
+- create simple Free Style jobs
+
+- create simple Pipeline jobs
+
+- create simple Pipeline with jenkinsfile
+
+## Outline
+
+- Part 1 - Getting familiar with Jenkins Dashboard
+
+- Part 2 - Installing Plugins
+
+- Part 3 - Creating a view
+
+- Part 4 - Creating First Jenkins Job
+
+- Part 5 - Creating a Simple Pipeline with Jenkins
+
+- Part 6 - Creating a Jenkins Pipeline with Jenkinsfile
+
+## Part 1 - Getting familiar with Jenkins Dashboard
+
+- Explain `Jenkins` dashboard.
+
+- Explain `Items` options.
+
+- Explain `Manage Jenkins` dashboard.
+
+- Explain other Jenkins terminology.
+
+## Part 2 - Installing Plugins
+
+- Follow `Manage Jenkins` -> `Manage Plugins` path and install the plugins (install without restart):
+
+  -  `AnsiColor`
+    
+  -  `Copy Artifact`
+
+  -  `Deploy to container`
+
+## Part 3 - Creating a view
+
+- Click `My Views` on the left menu items or click `+` on the jobs tabs.
+
+- Select `New View`
+
+- Give a name like `my view`
+
+- Select `List View` option
+
+- Select `OK` option
+
+
+## Part 4 - Creating First Jenkins Job
+
+- We will create a job in Jenkins which picks up a simple "Hello World" bash script and runs it. The freestyle build job is a highly flexible and easy-to-use option. To create a Jenkins freestyle job;
+
+  - Open your Jenkins dashboard and click on `New Item` to create a new job item.
+
+  - Enter `my-first-job` then select `free style project` and click `OK`.
+
+  - Enter `My first jenkins job` in the description field.
+
+  - Explain `Source Code Management`, `Build Triggers`,  `Build Environment`, `Build`, `Post-build Actions` tabs.
+
+    ```text
+    1. Source Code Management Tab : optional SCM, such as CVS or Subversion where your source code resides.
+    2. Build Triggers : Optional triggers to control when Jenkins will perform builds.
+    3. Build Environment: Some sort of build script that performs the build 
+    (ant, maven, shell script, batch file, etc.) where the real work happens
+    4. Build : Optional steps to collect information out of the build, 
+    such as archiving the artifacts and/or recording javadoc and test results.
+    5. Post-build Actions : Optional steps to notify other people/systems 
+    with the build result, such as sending e-mails, IMs, updating issue tracker, etc.
+    ```
+
+  - Go to `Build` section and choose "Execute Shell Command" for Mac users and "Execute Windows batch command" for Windows users  from `Add build step` dropdown menu.
+
+  - Write down just `echo "Hello World, This is my first job"` to execute command, in text area shown.
+
+  - Click `apply` and `save`  buttons.
+
+- On the Project job page, click to `Build now`.
+
+- Show and explain the result of this build action under the `Build History`
+
+  - Click to the build number to reach build page.
+
+  - Show the console results from `Console Output`.
+
+
+## Part 5 - Creating a Simple Pipeline with Jenkins
+
+- Go to the Jenkins dashboard and click on `New Item` to create a pipeline.
+
+- Enter `simple-pipeline` then select `Pipeline` and click `OK`.
+
+- Enter `My first simple pipeline` in the description field.
+
+- Go to the `Pipeline` section, enter following script, then click `apply` and `save`.
+
+```text
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello, Jenkins!'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+            }
+        }
+    }
+
+       post {
+        always {
+            echo 'This will always run.'
+        }
+        success {
+            echo 'This will run only if the pipeline succeeded.'
+        }
+        failure {
+            echo 'This will run only if the pipeline failed.'
+        }
+        unstable {
+            echo 'This will run if the pipeline is unstable (e.g., some tests failed).'
+        }
+        changed {
+            echo 'This will run if the result of the pipeline is different from the previous run.'
+        }
+        aborted {
+            echo 'This will run if the pipeline was manually aborted.'
+        }
+    }
+}
+
+```
+
+- Go to the project page and click `Build Now`.
+
+- Explain the built results.
+
+- Explain the pipeline script.
+
+## Part 6 - Creating a Jenkins Pipeline with Jenkinsfile
+
+- Create a public project repository `jenkinsfile-pipeline-project` on your GitHub account.
+
+- Clone the `jenkinsfile-pipeline-project` repository on local computer.
+
+```bash
+git clone <your-repo-url>
+```
+- Create a `Jenkinsfile` within your local `jenkinsfile-pipeline-project` repo and save following pipeline script. Consider that filename 'Jenkinsfile' is case sensitive.
+
+Windows users will face error when they execute below script (They should replace "sh" -> "bat")
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps {
+                echo "Clarusway_Way to Reinvent Yourself"
+                sh 'echo using shell within Jenkinsfile'
+                echo 'not using shell in the Jenkinsfile'
+            }
+        }
+        stage('Publish Test Results') {
+            steps {
+                echo "Clarusway_Way to Reinvent Yourself"
+                sh 'echo using shell within Jenkinsfile'
+                echo 'not using shell in the Jenkinsfile'
+            }
+        }
+    }
+}
+```
+or we can adapt script like: 
+
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Test') {
+            steps {
+                echo "Clarusway_Way to Reinvent Yourself"
+                script {
+                    if (isUnix()) {
+                        sh 'echo using shell within Jenkinsfile'
+                    } else {
+                        bat 'echo using batch within Jenkinsfile'
+                    }
+                }
+                echo 'Jenkins uses above platform'
+            }
+        }
+        stage('Publish Test Results') {
+            steps {
+                echo "Clarusway_Way to Reinvent Yourself"
+                script {
+                    if (isUnix()) {
+                        sh 'echo using shell within Jenkinsfile'
+                    } else {
+                        bat 'echo using batch within Jenkinsfile'
+                    }
+                }
+                echo 'Jenkins uses above platform'
+            }
+        }
+    }
+}
+```
+
+- Commit and push the local changes to update the remote repo on GitHub.
+
+```bash
+git add .
+git commit -m 'added Jenkinsfile'
+git push
+```
+
+- Go to the Jenkins dashboard and click on `New Item` to create a pipeline.
+
+- Enter `pipeline-from-jenkinsfile` then select `Pipeline` and click `OK`.
+
+- Enter `Simple pipeline configured with Jenkinsfile` in the description field.
+
+- Go to the `Pipeline` section, and select `Pipeline script from SCM` in the `Definition` field.
+
+- Select `Git` in the `SCM` field.
+
+- Enter URL of the project repository, and let others be default.
+
+```text
+https://github.com/<your_github_account_name>/jenkinsfile-pipeline-project/
+```
+
+- Click `apply` and `save`. Note that the script `Jenkinsfile` should be placed under root folder of repo.
+
+- Go to the Jenkins project page and click `Build Now`.
+
+- Explain the role of `Jenkinsfile` and the built results.
